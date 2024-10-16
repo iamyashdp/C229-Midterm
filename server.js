@@ -35,6 +35,9 @@
  * Good luck, and may your code be bug-free!
  */
 
+//Student Name: Yash Patel
+//Student ID: 301089593
+
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -60,97 +63,91 @@ app.get('/', (req, res) => {
 // Description: Get all items (books)
 // Task: Implement logic to return the full list of books
 app.get('/api/items', (req, res) => {
-  // TODO: Add logic to return all books
-
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
-
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
+  res.json(books);
 });
 
 // GET /api/items?title=[<<partial title name>>]
 // Description: Search for books by partial title match
 // Task: Implement logic to return books matching the partial title
 app.get('/api/items/search', (req, res) => {
-  // TODO: Add logic to search for books by title (use partial matching)
-  
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
 
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
+  //get params and convert lowercase
+  const title = req.query.title.toLowerCase();
+  //filter book titles
+  const matchingItems = books.filter(books => books.toLowerCase().includes(title));
+
+  res.json(matchingItems);
+
 });
 
 // GET /api/items/:id
 // Description: Get a specific item by ID
 // Task: Implement logic to return a book by its index (ID)
 app.get('/api/items/:id', (req, res) => {
-  // TODO: Add logic to return a book by its index (ID)
-  
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
+// Get book id from params
+    const id = parseInt(req.params.id); 
+    
+    //get the book from index
+    if (id >= 0 && id < books.length) {
+      res.json(books[id]);  // Return the book if the index is valid
+    } else {
+      res.status(404).json({ error: 'Book not found' });  // Return 404 if the index is invalid
+    }
+  });
 
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
-});
 
 // POST /api/items
 // Description: Add a new item
 // Task: Implement logic to add a new book to the array
-app.post('/api/items', (req, res) => {
-  // TODO: Add logic to add a new book to the array
-  
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
+  app.post('/api/items', (req, res) => {
+     // Get new book title from request body
+    const newBook = req.body.title; 
 
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
-});
+    // Add new book to the array
+    if (newBook && newBook.trim()) {
+      books.push(newBook);  
+      res.status(201).json({ message: 'Book added', book: newBook });  
+    } else {
+      res.status(400).json({ error: 'Invalid book title' });  
+    }
+  });
+  
 
 // PUT /api/items/:id
 // Description: Update an item by ID
 // Task: Implement logic to update a book by its index (ID)
 app.put('/api/items/:id', (req, res) => {
-  // TODO: Add logic to update a book by its index
-  
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
+  // Get book index from URL params
+    const id = parseInt(req.params.id);  
 
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
-});
+    // Get updated book title from request body
+    const updatedBook = req.body.title;  
+
+    //update the title using index(id)
+    if (id >= 0 && id < books.length && updatedBook && updatedBook.trim()) {
+      books[id] = updatedBook;  
+      res.json({ message: 'Book updated', book: updatedBook });  
+    } else {
+      res.status(400).json({ error: 'Invalid request' });  
+    }
+  });
+
 
 // DELETE /api/items/:id
 // Description: Remove an item by ID
 // Task: Implement logic to remove a book by its index (ID)
-app.delete('/api/items/:id', (req, res) => {
-  // TODO: Add logic to remove a book by its index
-  
-  // ***************************************************************
-  // ***************************************************************
-  // ***************  Implement your code here  ********************
-  // ***************************************************************
-  // ***************************************************************
+  app.delete('/api/items/:id', (req, res) => {
+    // Get book id from params
+    const id = parseInt(req.params.id); 
 
-  // Don't forget to remove the line below:
-  res.status(501).send('Not Implemented');
-});
+    if (id >= 0 && id < books.length) {
+      const removedBook = books.splice(id, 1);  
+      res.json({ message: 'Book deleted', book: removedBook[0] });  
+    } else {
+      res.status(404).json({ error: 'Book not found' }); 
+    }
+  });
+
 
 // Start the server
 app.listen(PORT, () => {
